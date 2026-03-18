@@ -36,7 +36,7 @@ jobs:
           KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
 
           # import certificate and provisioning profile from secrets
-          echo -n "$CERTIFICATE_P12" | base64 --decode -o $CERT_PATH
+          echo "$CERTIFICATE" | base64 --decode > $CERT_PATH
 
           # create temporary keychain
           security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
@@ -83,10 +83,15 @@ jobs:
           # This step usually requires xcrun altool or Transporter
           # For brevity, documenting the command
           echo "Uploading to TestFlight..."
-          # xcrun altool --upload-app --type ios --file build/ipa/Longeviclinics.ipa --apiKey $APPSTORE_KEY_ID --apiIssuer $APPSTORE_ISSUER_ID
+          API_KEY_PATH=$RUNNER_TEMP/api_key.p8
+          echo "$APPSTORE_API_KEY" | base64 --decode > $API_KEY_PATH
+          # xcrun altool --upload-app --type ios --file build/ipa/Longeviclinics.ipa --apiKey "$APPSTORE_KEY_ID" --apiIssuer "$APPSTORE_ISSUER_ID" --apiPrivateKey "$API_KEY_PATH"
 
       - name: Notify Slack/Discord
         if: always()
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"iOS Build: ${{ job.status }}"}' ${{ secrets.SLACK_WEBHOOK }}
-          curl -X POST -H 'Content-type: application/json' --data '{"content":"iOS Build: ${{ job.status }}"}' ${{ secrets.DISCORD_WEBHOOK }}
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"iOS Build: ${{ job.status }}"}' "$SLACK_WEBHOOK"
+          curl -X POST -H 'Content-type: application/json' --data '{"content":"iOS Build: ${{ job.status }}"}' "$DISCORD_WEBHOOK"
