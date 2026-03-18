@@ -7,18 +7,31 @@
     "icon": "./assets/images/icon.png",
     "scheme": "antigrav",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.longeviclinics.app",
+      "googleServicesFile": "./config/firebase/GoogleService-Info.plist",
+      "infoPlist": {
+        "NSHealthShareUsageDescription": "Longeviclinics needs access to your health data to track biomarkers and provide personalized AI medical insights.",
+        "NSHealthUpdateUsageDescription": "Longeviclinics needs access to update your health data for better medical tracking.",
+        "UIBackgroundModes": [
+          "remote-notification"
+        ]
+      },
+      "entitlements": {
+        "com.apple.developer.healthkit": true,
+        "com.apple.developer.healthkit.access": []
+      }
     },
     "android": {
+      "package": "com.longeviclinics.app",
+      "googleServicesFile": "./config/firebase/google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },
     "web": {
@@ -38,11 +51,28 @@
             "backgroundColor": "#000000"
           }
         }
+      ],
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      "@react-native-firebase/crashlytics",
+      "expo-apple-authentication",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/notification-icon.png",
+          "color": "#ffffff",
+          "sounds": []
+        }
       ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "longeviclinics-expo-id"
+      }
     }
   }
 }
